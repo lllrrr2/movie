@@ -238,7 +238,7 @@ class _CustomPopupMenuState extends State<CustomPopupMenu> {
       return child;
     } else {
       return PopScope(
-        onPopInvoked: (_) {
+        onPopInvokedWithResult: (didPop, _) {
           _hideMenu();
         },
         child: child,

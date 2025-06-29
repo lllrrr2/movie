@@ -66,7 +66,8 @@ class CupertinoEasyAppBar extends StatefulWidget
     );
     Color? themeOf = CupertinoTheme.of(context).barBackgroundColor;
     final Color backgroundColor = easy ?? themeOf;
-    return backgroundColor.alpha == 0xFF;
+    int px = (backgroundColor.a * 255.0).round() & 0xff;
+    return px == 0xFF;
   }
 
   @override

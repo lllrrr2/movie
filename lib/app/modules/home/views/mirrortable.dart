@@ -174,7 +174,7 @@ class _MirrorTableViewState extends State<MirrorTableView> {
           String path = '${directory.path}/$filename';
           File file = File(path);
           await file.writeAsString(append);
-          Share.shareXFiles([XFile(path)]);
+          SharePlus.instance.share(ShareParams(files: [XFile(path)]));
         } else if (GetPlatform.isDesktop) {
           Directory? directory = await getDownloadsDirectory();
           if (directory == null) return;

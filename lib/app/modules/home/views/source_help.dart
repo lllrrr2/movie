@@ -102,7 +102,6 @@ class _SourceHelpTableState extends State<SourceHelpTable> {
         return completer.future;
       }
       showEasyCupertinoDialog(
-        context: ctx,
         content: Text(element.msg ?? ""),
         title: element.title,
         confirmText: playfulConfirmText,
