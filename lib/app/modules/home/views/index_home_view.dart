@@ -163,7 +163,7 @@ class _IndexHomeViewState extends State<IndexHomeView>
                 cursor: SystemMouseCursors.click,
                 child: CupertinoButton(
                   child: const Icon(
-                    Icons.movie,
+                    CupertinoIcons.bolt_circle_fill,
                     color: Colors.white,
                   ),
                   onPressed: () {
