@@ -506,10 +506,8 @@ class _SettingsViewState extends State<SettingsView> {
               ),
             ),
           ),
-          CSButton(
-            CSButtonType.DEFAULT,
-            "Licenses",
-            () {
+          GestureDetector(
+            onTap: () {
               showCupertinoModalBottomSheet(
                 context: context,
                 builder: (_) => SizedBox(
@@ -519,6 +517,12 @@ class _SettingsViewState extends State<SettingsView> {
                 ),
               );
             },
+            child: CSControl(
+              nameWidget: const Text("开源协议"),
+              style: const CSWidgetStyle(
+                icon: Icon(CupertinoIcons.lab_flask_solid),
+              ),
+            ),
           ),
           const SizedBox(
             height: 24,
