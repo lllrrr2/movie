@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:dlna_dart/dlna.dart';
@@ -25,7 +26,10 @@ class _CastScreenState extends State<CastScreen> {
   Map<String, DLNADevice> deviceList = {};
 
   Future<void> init() async {
-    m = await searcher.start(reusePort: true);
+    m = await searcher.start(
+      // Windows and Android do not support reusePort
+      reusePort: !Platform.isWindows && !Platform.isAndroid,
+    );
     m.devices.stream.listen((dlist) {
       dlist.forEach((key, value) {
         cacheDeviceList[key] = value;
