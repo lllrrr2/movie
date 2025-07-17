@@ -89,7 +89,7 @@ jobs:
           path: build/linux/x64/release/${{ env.TARBALL_NAME }}
 
   build-and-release:
-    if: github.repository_owner == "d1y"
+    if: ${{ github.repository_owner == 'd1y' }}
     runs-on: macos-latest
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
@@ -142,7 +142,7 @@ jobs:
           flutter config --enable-macos-desktop
           flutter build macos --release -v
           cd build/macos/Build/Products/Release
-          zip -r catmovie-mac.zip 小猫影视.app/*
+          zip -ry catmovie-mac.zip 小猫影视.app/*
 
       - uses: actions/download-artifact@v4
         with:
