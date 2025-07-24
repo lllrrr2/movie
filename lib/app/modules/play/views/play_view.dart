@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:catmovie/app/modules/play/views/cast_screen.dart';
+import 'package:catmovie/app/widget/zoom.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -89,26 +90,28 @@ class _PlayViewState extends State<PlayView> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const CupertinoNavigationBarBackButton(),
+              Zoom(child: const CupertinoNavigationBarBackButton()),
               if (canBeShowParseVipButton)
-                CupertinoButton(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6.0,
+                Zoom(
+                  child: CupertinoButton(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6.0,
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(CupertinoIcons.collections, size: 16),
+                        SizedBox(width: 6.0),
+                        Text(
+                          "解析源",
+                          style: TextStyle(fontSize: 14.0),
+                        ),
+                        SizedBox(width: 2.0),
+                      ],
+                    ),
+                    onPressed: () {
+                      Get.to(() => const ParseVipManagePageView());
+                    },
                   ),
-                  child: const Row(
-                    children: [
-                      Icon(CupertinoIcons.collections, size: 16),
-                      SizedBox(width: 6.0),
-                      Text(
-                        "解析源",
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      SizedBox(width: 2.0),
-                    ],
-                  ),
-                  onPressed: () {
-                    Get.to(() => const ParseVipManagePageView());
-                  },
                 ),
             ],
           ),
@@ -469,30 +472,32 @@ class _PlayViewState extends State<PlayView> {
                                             ];
                                           },
                                           buttonBuilder: (context, showMenu) {
-                                            return CupertinoButton.filled(
-                                              padding: EdgeInsets.zero,
-                                              child: Builder(builder: (cx) {
-                                                var len =
-                                                    playlist[play.tabIndex]
-                                                        .datas
-                                                        .length;
-                                                var text =
-                                                    len <= 1 ? "播放" : curr.name;
-                                                var playState = play.playState;
-                                                if (playState.tabIndex ==
-                                                        play.tabIndex &&
-                                                    index == playState.index) {
-                                                  text += "(上次播放)";
-                                                }
-                                                return Text(text);
-                                              }),
-                                              onPressed: () {
-                                                handlePlay(
-                                                    play.tabIndex, index);
-                                              },
-                                              onLongPress: () {
-                                                showMenu();
-                                              },
+                                            return HoverCursor(
+                                              child: CupertinoButton.filled(
+                                                padding: EdgeInsets.zero,
+                                                child: Builder(builder: (cx) {
+                                                  var len =
+                                                      playlist[play.tabIndex]
+                                                          .datas
+                                                          .length;
+                                                  var text =
+                                                      len <= 1 ? "播放" : curr.name;
+                                                  var playState = play.playState;
+                                                  if (playState.tabIndex ==
+                                                          play.tabIndex &&
+                                                      index == playState.index) {
+                                                    text += "(上次播放)";
+                                                  }
+                                                  return Text(text);
+                                                }),
+                                                onPressed: () {
+                                                  handlePlay(
+                                                      play.tabIndex, index);
+                                                },
+                                                onLongPress: () {
+                                                  showMenu();
+                                                },
+                                              ),
                                             );
                                           },
                                         );

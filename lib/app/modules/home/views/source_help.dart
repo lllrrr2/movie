@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:catmovie/app/widget/zoom.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ import 'package:xi/adapters/mac_cms.dart';
 import 'package:catmovie/shared/enum.dart';
 import 'package:xi/xi.dart';
 
-const fetchMirrorAPI =
+const kCatMovieSourceAPI =
     "https://cdn.jsdelivr.net/gh/waifu-project/v1@latest/x.json";
 
 class SourceHelpTable extends StatefulWidget {
@@ -36,7 +37,7 @@ class _SourceHelpTableState extends State<SourceHelpTable> {
       _isLoadingFromAJAX = true;
     });
     try {
-      var resp = await XHttp.dio.get(fetchMirrorAPI, options: $toDioOptions());
+      var resp = await XHttp.dio.get(kCatMovieSourceAPI, options: $toDioOptions());
       late List<dynamic> list;
       if (resp.data is List) {
         list = resp.data;
@@ -334,7 +335,7 @@ class _SourceHelpTableState extends State<SourceHelpTable> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CupertinoNavigationBarBackButton(),
+                  Zoom(child: const CupertinoNavigationBarBackButton()),
                   Text(
                     "o(-`д´- ｡)",
                     style: Theme.of(context).textTheme.titleLarge,
@@ -343,29 +344,31 @@ class _SourceHelpTableState extends State<SourceHelpTable> {
                     padding: const EdgeInsets.only(
                       right: 12,
                     ),
-                    child: CupertinoButton.filled(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      onPressed: handleImportFiles,
-                      child: Row(
-                        spacing: 3,
-                        children: [
-                          const Icon(
-                            CupertinoIcons.arrow_down_square_fill,
-                            color: CupertinoColors.white,
-                          ),
-                          Text(
-                            "导入文件",
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyLarge!.copyWith(
-                                  color: CupertinoColors.white,
-                                  fontSize: 12,
-                                ),
-                          ),
-                        ],
+                    child: Zoom(
+                      child: CupertinoButton.filled(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        onPressed: handleImportFiles,
+                        child: Row(
+                          spacing: 3,
+                          children: [
+                            const Icon(
+                              CupertinoIcons.arrow_down_square_fill,
+                              color: CupertinoColors.white,
+                            ),
+                            Text(
+                              "导入文件",
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge!.copyWith(
+                                    color: CupertinoColors.white,
+                                    fontSize: 12,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -390,20 +393,23 @@ class _SourceHelpTableState extends State<SourceHelpTable> {
                       }
                       return ListView(
                         children: mirrors.map((item) {
-                          return CupertinoListTile(
-                            title: Text(
-                              item.title ?? "",
-                              style: TextStyle(
-                                color: context.isDarkMode
-                                    ? Colors.white54
-                                    : Colors.black54,
+                          return Zoom(
+                            scaleRatio: .99,
+                            child: CupertinoListTile(
+                              title: Text(
+                                item.title ?? "",
+                                style: TextStyle(
+                                  color: context.isDarkMode
+                                      ? Colors.white54
+                                      : Colors.black54,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                              onTap: () {
+                                handleCopyText(item: item);
+                              },
                             ),
-                            onTap: () {
-                              handleCopyText(item: item);
-                            },
                           );
                         }).toList(),
                       );
@@ -430,17 +436,19 @@ class _SourceHelpTableState extends State<SourceHelpTable> {
                     }
                     return const SizedBox.shrink();
                   }
-                  return Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 0,
-                      vertical: 12,
-                    ),
-                    child: CupertinoButton.filled(
-                      borderRadius: BorderRadius.circular(24),
-                      child: const Text("一键添加到本地"),
-                      onPressed: () {
-                        handleCopyText(canCopyAll: true);
-                      },
+                  return Zoom(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 0,
+                        vertical: 12,
+                      ),
+                      child: CupertinoButton.filled(
+                        borderRadius: BorderRadius.circular(24),
+                        child: const Text("一键添加到本地"),
+                        onPressed: () {
+                          handleCopyText(canCopyAll: true);
+                        },
+                      ),
                     ),
                   );
                 },
