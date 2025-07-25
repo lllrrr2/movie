@@ -48,7 +48,8 @@ class SettingsView extends StatefulWidget {
   createState() => _SettingsViewState();
 }
 
-class _SettingsViewState extends State<SettingsView> {
+class _SettingsViewState extends State<SettingsView>
+    with AutomaticKeepAliveClientMixin {
   final HomeController home = Get.find<HomeController>();
 
   late StreamSubscription $$bus;
@@ -274,6 +275,7 @@ class _SettingsViewState extends State<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: const WindowAppBar(
         title: Text("设置"),
@@ -589,4 +591,7 @@ class _SettingsViewState extends State<SettingsView> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
