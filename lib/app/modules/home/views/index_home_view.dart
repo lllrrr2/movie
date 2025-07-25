@@ -21,6 +21,7 @@ import 'package:catmovie/app/widget/window_appbar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:simple/x.dart';
+import 'package:smooth_list_view/smooth_list_view.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 import 'package:xi/xi.dart';
 
@@ -291,7 +292,8 @@ class _IndexHomeViewState extends State<IndexHomeView>
                         milliseconds: 420,
                       ),
                       curve: Curves.decelerate,
-                      child: ListView.builder(
+                      child: SmoothListView.builder(
+                        duration: kSmoothListViewDuration,
                         itemCount: controller.currentCategoryer.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: ((context, index) {

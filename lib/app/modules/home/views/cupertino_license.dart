@@ -1,3 +1,4 @@
+import 'package:catmovie/app/modules/home/controllers/home_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:catmovie/app/extension.dart';
 import 'package:catmovie/app/widget/window_appbar.dart';
 import 'package:catmovie/widget/flutter_custom_license_page.dart';
+import 'package:smooth_list_view/smooth_list_view.dart';
 
 const kGithubRepo = "https://github.com/waifu-project/movie";
 
@@ -28,7 +30,8 @@ Widget body(
   switch (licenseDataFuture.connectionState) {
     case ConnectionState.done:
       LicenseData? licenseData = licenseDataFuture.data;
-      return ListView(
+      return SmoothListView(
+        duration: kSmoothListViewDuration,
         children: [
           const SizedBox(height: 12),
           const Padding(
@@ -133,7 +136,8 @@ Widget body(
                         ),
                       ),
                       child: Material(
-                        child: ListView.builder(
+                        child: SmoothListView.builder(
+                          duration: kSmoothListViewDuration,
                           itemCount: packageLicenses.length,
                           itemBuilder: (context, index) {
                             return Padding(
