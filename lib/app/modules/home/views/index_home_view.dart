@@ -51,7 +51,7 @@ class _IndexHomeViewState extends State<IndexHomeView>
 
   int get cardCount {
     double screenWidth = context.mediaQuery.size.width;
-    double minCardWidth = 200;
+    double minCardWidth = 188;
     double spacing = 5;
     int count = ((screenWidth + spacing) / (minCardWidth + spacing)).floor();
     count = count.clamp(1, 6);
