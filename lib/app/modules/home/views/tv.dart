@@ -462,21 +462,25 @@ class TVUIState extends State<TVUI>
   void dispose() async {
     _playPauseIconTimer?.cancel();
     await player.dispose();
-    hideCursor.showCursor();
-    windowManager.removeListener(this);
+    if (GetPlatform.isDesktop) {
+      hideCursor.showCursor();
+      windowManager.removeListener(this);
+    }
     super.dispose();
   }
 
   @override
   void initState() {
-    windowManager.addListener(this);
+    if (GetPlatform.isDesktop) {
+      windowManager.addListener(this);
+    }
     super.initState();
   }
 
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) {
     initData();
-    hideCursor.showCursor();
+    if (GetPlatform.isDesktop) hideCursor.showCursor();
     focusNode.requestFocus();
   }
 
@@ -834,7 +838,7 @@ class TVUIState extends State<TVUI>
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              if (GetPlatform.isMobile) {
+              if (GetPlatform.isDesktop) {
                 _autoHideCursorTimer?.cancel();
                 hideCursor.showCursor();
               }
@@ -846,7 +850,7 @@ class TVUIState extends State<TVUI>
               }
             },
             onDoubleTap: () async {
-              if (GetPlatform.isMobile) {
+              if (GetPlatform.isDesktop) {
                 _autoHideCursorTimer?.cancel();
                 hideCursor.showCursor();
               }
@@ -1215,7 +1219,7 @@ class TVUIState extends State<TVUI>
           if (!isOpened) {
             focusNode.requestFocus();
           } else {
-            if (GetPlatform.isMobile) {
+            if (GetPlatform.isDesktop) {
               _autoHideCursorTimer?.cancel();
               hideCursor.showCursor();
             }
