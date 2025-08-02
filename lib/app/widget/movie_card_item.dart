@@ -19,6 +19,7 @@ class MovieCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Zoom(
         child: Container(

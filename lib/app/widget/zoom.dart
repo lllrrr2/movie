@@ -33,7 +33,7 @@ class Zoom extends StatelessWidget {
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      hitTestBehavior: HitTestBehavior.translucent,
+      hitTestBehavior: HitTestBehavior.opaque,
       child: BounceTapper(
         shrinkScaleFactor: scaleRatio,
         onTap: onTap,
