@@ -333,6 +333,19 @@ document.addEventListener('DOMContentLoaded', function() {
     return true;
   }
 
+  Future<String> parseIframe(String iframe) async {
+    var closed = showLoading("正在解析iframe");
+    var result = await home.currentMirrorItem.parseIframe(iframe);
+    closed();
+    if (result.isEmpty) {
+      EasyLoading.showError("解析失败, 无法播放");
+      return "";
+    }
+    debugPrint("result: $result");
+    String url = result[0]; // NOTE(d1y): 估计解析到不止一个, 该用哪一个呢!
+    return url;
+  }
+
   Future<bool> handleTapPlayerButtom(
     VideoInfo curr,
     List<VideoInfo> playList,
@@ -403,6 +416,10 @@ document.addEventListener('DOMContentLoaded', function() {
               );
             }
           } else {
+            if (curr.type == VideoType.iframe) {
+              url = await parseIframe(url);
+              if (url.isEmpty) return false;
+            }
             url.openURL();
           }
         }
@@ -413,16 +430,15 @@ document.addEventListener('DOMContentLoaded', function() {
           return false;
         }
         if (curr.type == VideoType.iframe) {
-          EasyLoading.showError("IINA不支持iframe播放");
-          return false;
-        } else {
-          url.openToIINA();
+          url = await parseIframe(url);
+          if (url.isEmpty) return false;
         }
+        url.openToIINA();
         break;
       case VideoKernel.mediaKit:
         if (curr.type == VideoType.iframe) {
-          EasyLoading.showError("Media-Kit不支持iframe播放");
-          return false;
+          url = await parseIframe(url);
+          if (url.isEmpty) return false;
         }
         mediaKitPlayer.open(Media(url));
         break;
