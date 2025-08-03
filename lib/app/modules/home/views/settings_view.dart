@@ -319,6 +319,11 @@ class _SettingsViewState extends State<SettingsView>
     if (cx.isNotEmpty && cx != editingControllerValue) {
       editingControllerValue = cx;
     }
+    var fullWidth = context.mediaQuery.size.width;
+    var width = fullWidth * .48;
+    if (fullWidth <= 700) {
+      width = 620;
+    }
     Get.defaultDialog(
       actions: [
         Zoom(
@@ -355,7 +360,7 @@ class _SettingsViewState extends State<SettingsView>
       ),
       content: SizedBox(
         height: Get.height * .2,
-        width: context.widthTransformer(dividedBy: 1),
+        width: width,
         child: Card(
           color: const Color.fromRGBO(0, 0, 0, 1),
           child: Padding(
