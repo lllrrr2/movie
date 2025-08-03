@@ -518,8 +518,15 @@ class Copyright extends AbstractSettingsTile {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: 12),
+    var theme = SettingsTheme.of(context);
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: theme.themeData.settingsSectionBackground,
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(12),
+        ),
+      ),
       child: GestureDetector(
         onTap: () {
           "$kGithubRepo/tree/$gitCommit".openURL();
