@@ -184,6 +184,7 @@ class MacCMSSpider extends ISpiderAdapter {
   ///   `<?xml`
   /// ```
   ResponseCustomType getResponseType(String checkText) {
+    if (checkText.length < 2) return ResponseCustomType.unknow;
     var _k = _RespCheckkv.keys.where((_key) {
       int _len = _key.length;
       var _sub = checkText.substring(0, _len);
