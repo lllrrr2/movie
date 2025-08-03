@@ -212,6 +212,10 @@ class _IndexHomeViewState extends State<IndexHomeView>
                 ),
                 onPressed: () {
                   EasyLoading.dismiss();
+                  if (homeview.mirrorListIsEmpty) {
+                    EasyLoading.showError('暂无可用源');
+                    return;
+                  }
                   Get.to(() => const SearchV2());
                 },
               ),
