@@ -34,8 +34,12 @@ extension ISettingMixin on Object {
 
   Isar get isarInstance => IsarRepository().isar;
 
-  T getSettingAsKeyIdent<T>(SettingsAllKey key) {
-    return getSettingAsKey(key) as T;
+  T getSettingAsKeyIdent<T>(SettingsAllKey key, {T? defaultValue}) {
+    try {
+      return getSettingAsKey(key) as T;
+    } catch (e) {
+      return defaultValue!;
+    }
   }
 
   Object getSettingAsKey(SettingsAllKey key) {

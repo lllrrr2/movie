@@ -275,6 +275,8 @@ class _SettingsViewState extends State<SettingsView>
       confirmText: "我知道了",
       context: context,
     );
+    _mirrorLength = 0;
+    if (mounted) setState(() {});
   }
 
   List<PullDownMenuEntry> _buildVideoKernel() {
@@ -311,7 +313,9 @@ class _SettingsViewState extends State<SettingsView>
   }
 
   void handleSourceHelp() {
-    var cx = getSettingAsKeyIdent<String>(SettingsAllKey.mirrorTextarea).trim();
+    var cx = getSettingAsKeyIdent<String>(SettingsAllKey.mirrorTextarea,
+            defaultValue: "")
+        .trim();
     if (cx.isNotEmpty && cx != editingControllerValue) {
       editingControllerValue = cx;
     }
