@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (GetPlatform.isWindows) {
       bool bWebviewWindow = await WebviewWindow.isWebviewAvailable();
       if (!bWebviewWindow) {
-        showCupertinoDialog(
+        await showCupertinoDialog(
           builder: (BuildContext context) => CupertinoAlertDialog(
             title: const Text('提示'),
             content: const Padding(
@@ -252,8 +252,8 @@ document.addEventListener('DOMContentLoaded', function() {
           ),
           context: Get.context as BuildContext,
         );
+        return false;
       }
-      return false;
     }
 
     Webview webview = await WebviewWindow.create(
