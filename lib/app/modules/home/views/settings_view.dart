@@ -368,6 +368,7 @@ class _SettingsViewState extends State<SettingsView>
             child: TextField(
               controller: _editingController,
               maxLines: 10,
+              style: TextStyle(color: Colors.white, fontSize: 14),
               decoration: InputDecoration.collapsed(
                 hintText: sourceHelpText,
               ),

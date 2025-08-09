@@ -1,3 +1,4 @@
+import 'package:catmovie/app/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:catmovie/app/modules/home/controllers/home_controller.dart';
@@ -24,8 +25,8 @@ class KEmptyMirror extends StatelessWidget {
   TextStyle get _style {
     return Theme.of(context)
         .textTheme
-        .titleLarge!
-        .copyWith(color: context.isDarkMode ? Colors.white : Colors.black);
+        .titleMedium!
+        .copyWith(color: (context.isDarkMode ? Colors.white : Colors.black).withValues(alpha: .72));
   }
 
   @override
@@ -44,7 +45,7 @@ class KEmptyMirror extends StatelessWidget {
           Text(
             '无数据源 :(',
             style: TextStyle(
-              color: !context.isDarkMode ? Colors.black : Colors.white,
+              color: (context.isDarkMode ? '#6f737a' : '#767a82').$color,
             ),
           ),
           GestureDetector(

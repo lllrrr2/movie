@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:catmovie/app/extension.dart';
 import 'package:catmovie/app/widget/zoom.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -144,9 +145,15 @@ class _ParseVipManagePageViewState extends State<ParseVipManagePageView> {
           children: [
             Image.asset(
               "assets/images/error.png",
-              width: Get.width * .33,
+              width: 120,
+              height: 120,
             ),
-            const Text("暂无解析接口 :("),
+            Text(
+              "暂无解析接口 :(",
+              style: TextStyle(
+                color: (context.isDarkMode ? '#6f737a' : '#767a82').$color,
+              ),
+            ),
           ],
         ),
       ),
