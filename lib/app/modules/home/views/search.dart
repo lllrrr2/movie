@@ -404,11 +404,14 @@ class _SearchV2State extends State<SearchV2> with AfterLayoutMixin {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "搜索历史",
-                style: TextStyle(
-                    fontSize: 21,
-                    color: Get.isDarkMode ? Colors.white : Colors.black),
+              Padding(
+                padding: searchHistory.isEmpty ? EdgeInsets.symmetric(vertical: 5) : EdgeInsets.zero,
+                child: Text(
+                  "搜索历史",
+                  style: TextStyle(
+                      fontSize: 21,
+                      color: Get.isDarkMode ? Colors.white : Colors.black),
+                ),
               ),
               if (searchHistory.isNotEmpty) Zoom(
                 child: IconButton(
