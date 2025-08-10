@@ -40,6 +40,8 @@ enum HandleDiglogTapType {
   kget,
 }
 
+GlobalKey kVideoKernelBtnKey = GlobalKey();
+
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
 
@@ -466,7 +468,28 @@ class _SettingsViewState extends State<SettingsView>
               SettingsTile(
                 leading: Icon(CupertinoIcons.macwindow),
                 title: Text("播放器内核"),
+                onPressed: (cx) {
+                  final RenderBox renderBox = kVideoKernelBtnKey.currentContext!
+                      .findRenderObject() as RenderBox;
+                  final Offset btnPosition =
+                      renderBox.localToGlobal(Offset.zero);
+                  final Size btnSize = renderBox.size;
+                  final double targetHeight = btnSize.height;
+                  final Rect targetRect = Rect.fromLTWH(
+                    btnPosition.dx - 6,
+                    btnPosition.dy + 6,
+                    btnSize.width,
+                    targetHeight,
+                  );
+                  showPullDownMenu(
+                    context: cx,
+                    items: _buildVideoKernel(),
+                    position: targetRect,
+                  );
+                },
                 trailing: PullDownButton(
+                  key: kVideoKernelBtnKey,
+                  menuOffset: 9,
                   itemBuilder: (cx) {
                     return _buildVideoKernel();
                   },
