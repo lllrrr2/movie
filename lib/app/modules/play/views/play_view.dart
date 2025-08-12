@@ -7,7 +7,7 @@ import 'package:catmovie/app/extension.dart';
 import 'package:catmovie/app/modules/play/controllers/play_controller.dart';
 import 'package:catmovie/app/modules/play/views/cast_screen.dart';
 import 'package:catmovie/app/widget/zoom.dart';
-import 'package:catmovie/isar/schema/video_search_schema.dart';
+import 'package:catmovie/isar/schema/video_history_schema.dart';
 import 'package:catmovie/shared/enum.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:equatable/equatable.dart';

@@ -1,6 +1,6 @@
 import 'package:isar/isar.dart';
 
-part 'video_search_schema.g.dart';
+part 'video_history_schema.g.dart';
 
 @embedded
 class VideoHistoryContextIsardModel {

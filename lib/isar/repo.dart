@@ -1,4 +1,4 @@
-import 'package:catmovie/isar/schema/video_search_schema.dart';
+import 'package:catmovie/isar/schema/video_history_schema.dart';
 import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:catmovie/isar/schema/history_schema.dart';

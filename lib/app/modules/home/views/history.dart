@@ -9,7 +9,7 @@ import 'package:catmovie/app/routes/app_pages.dart';
 import 'package:catmovie/app/widget/helper.dart';
 import 'package:catmovie/app/widget/window_appbar.dart';
 import 'package:catmovie/app/widget/zoom.dart';
-import 'package:catmovie/isar/schema/video_search_schema.dart';
+import 'package:catmovie/isar/schema/video_history_schema.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
