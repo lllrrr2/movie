@@ -289,7 +289,7 @@ class _PlayViewState extends State<PlayView> with AfterLayoutMixin {
           spacing: 6,
           children: [
             Icon(CupertinoIcons.ellipsis_circle_fill),
-            Text("播放列表"),
+            Text("播放列表", style: TextStyle(color: Colors.white)),
           ],
         ),
       ),
@@ -1084,13 +1084,13 @@ class _MediaKitPlaylistState extends State<MediaKitPlaylist>
                       children: [
                         Text(
                           "选集",
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                         Opacity(
                           opacity: .68,
                           child: Text(
                             "(共${list.length}集)",
-                            style: TextStyle(fontSize: 14),
+                            style: TextStyle(fontSize: 14, color: Colors.white),
                           ),
                         ),
                       ],
@@ -1101,7 +1101,7 @@ class _MediaKitPlaylistState extends State<MediaKitPlaylist>
                         spacing: 6,
                         children: [
                           Icon(sort.icon, color: Colors.white),
-                          Text(sort.name),
+                          Text(sort.name, style: TextStyle(color: Colors.white)),
                         ],
                       ),
                     ),
