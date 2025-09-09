@@ -200,7 +200,10 @@
               <th width="120px">原因</th>
             </tr>
             <tr v-for="item in value.data">
-              <td :title="item.parse.url">{{ item.parse.name }}</td>
+              <td :title="item.parse.url">
+                <img :src="item.logo" v-if="item.logo" width="88px" style="padding-bottom: 12px;" />
+                <p>{{ item.parse.name }}</p>
+              </td>
               <td><span :class="item.ok ? 'ok' : 'err'"></span></td>
               <td>{{ item.nsfw ? '18+' : '-' }}</td>
               <td>{{ item.time }}s</td>

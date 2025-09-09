@@ -13,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/charmbracelet/log"
 	"github.com/imroc/req/v3"
 	"github.com/longbridgeapp/opencc"
@@ -68,6 +69,7 @@ const (
 type Result struct {
 	Idx    int          `json:"idx"`    // 索引(map会丢失)
 	Parse  ParseResult  `json:"parse"`  // 上下文
+	Logo   string       `json:"logo"`   // 图标
 	OK     bool         `json:"ok"`     // 是否可用
 	Time   string       `json:"time"`   // 耗时
 	Reason string       `json:"reason"` // 原因
@@ -136,6 +138,17 @@ func getDomainWithURL(urlStr string) (string, error) {
 		host = strings.Trim(host, "[]")
 	}
 	return host, nil
+}
+
+func GetDomainAndProtocolWithURL(rawURL string) (string, error) {
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		return "", fmt.Errorf("解析URL失败: %w", err)
+	}
+	if parsedURL.Scheme == "" || parsedURL.Host == "" {
+		return "", fmt.Errorf("URL格式不正确，缺少协议或主机")
+	}
+	return parsedURL.Scheme + "://" + parsedURL.Host, nil
 }
 
 func isOKAndResponseType(body string) (ResponseType, error) {
@@ -275,6 +288,65 @@ func getItemWithText(text string, cx map[uint64]GithubIssueComment) []ParseResul
 	return result
 }
 
+func findLogo(domain string) string {
+	resp, err := req.Get(domain)
+	if err != nil {
+		return ""
+	}
+	html, err := resp.ToString()
+	if err != nil {
+		return ""
+	}
+	if !isHTML(html) {
+		return ""
+	}
+	result := ""
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
+	if err != nil {
+		return ""
+	}
+	// 1. 查找所有图片, 如果发现 src 属性中后缀是 logo.{png,jpg,gif} 就返回
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		if len(result) > 0 {
+			return
+		}
+		src, ok := s.Attr("src")
+		if !ok {
+			return
+		}
+		var ms = []string{"logo.png", "logo.jpg", "logo.gif", "logo.jpeg"}
+		for _, logo := range ms {
+			if strings.HasSuffix(src, logo) {
+				result = src
+				return
+			}
+		}
+	})
+	if result != "" {
+		if !strings.HasPrefix(result, "http") {
+			result = fmt.Sprintf("%s%s", domain, result)
+		}
+		return result
+	}
+	// 2. 检测默认图标是否存在
+	var logo1 = "/statics/img/logo_max_f.png"
+	var logo2 = "/template/stui_tpl/statics/img/logo_max_f.png"
+	var logo3 = "/static/jsui/img/logo_max_f.png"
+	var logo4 = "/template/LB_zyz/statics/img/logo_max_f.png"
+	var logo5 = "/template/ziyuan/img/logo_max_f.png"
+	var defaultLogos = []string{logo1, logo2, logo3, logo4, logo5}
+	for _, logo := range defaultLogos {
+		var realLogo = fmt.Sprintf("%s%s", domain, logo)
+		resp, err = req.Get(realLogo)
+		if err == nil {
+			if resp.StatusCode == 200 {
+				return realLogo
+			}
+		}
+	}
+	return ""
+}
+
 func runTaskCheck(list []ParseResult, ccTaskCount int) []Result {
 	var pool = pool.New().WithMaxGoroutines(ccTaskCount)
 	var cx sync.Map // map[int][Result]
@@ -289,7 +361,8 @@ func runTaskCheck(list []ParseResult, ccTaskCount int) []Result {
 			}()
 			result.Idx = idx
 			result.Parse = item
-			if domain, err := getDomainWithURL(item.URL); err == nil {
+			domain, err := getDomainWithURL(item.URL)
+			if err == nil {
 				if domains.Has(domain) {
 					log.Warn("跳过重复域名", "域名", domain, "链接", item.URL)
 					result.Reason = fmt.Sprintf("跳过重复域名: %s", domain)
@@ -303,7 +376,7 @@ func runTaskCheck(list []ParseResult, ccTaskCount int) []Result {
 			resp, err := req.Get(item.URL)
 			log.Info("检查资源", "名称", item.Text, "链接", item.URL)
 			if err != nil {
-				log.Error("检查资源失败1", "名称", item.Text, "链接", item.URL, "reason", err)
+				log.Error("请求资源失败", "名称", item.Text, "链接", item.URL, "reason", err)
 				result.Reason = err.Error()
 			} else {
 				var body, err = resp.ToString()
@@ -319,6 +392,8 @@ func runTaskCheck(list []ParseResult, ccTaskCount int) []Result {
 						result.Nsfw = item.Nsfw
 						result.Type = rt
 						result.OK = true
+						realDomain, _ := GetDomainAndProtocolWithURL(item.URL)
+						result.Logo = findLogo(realDomain)
 						log.Info("检查资源成功", "名称", item.Text, "链接", item.URL, "NSFW", result.Nsfw)
 					}
 				}
@@ -340,6 +415,7 @@ func runTaskCheck(list []ParseResult, ccTaskCount int) []Result {
 type v1 struct {
 	ID     string `json:"id"`
 	Name   string `json:"name"`
+	Logo   string `json:"logo,omitempty"`
 	Nsfw   bool   `json:"nsfw"`
 	API    v1API  `json:"api"`
 	Status bool   `json:"status"`
@@ -407,7 +483,7 @@ func dumpToJSON(_result map[uint64][]Result) (int, int) {
 					panic(err)
 				}
 				var root = fmt.Sprintf("%s://%s", cx.Scheme, cx.Host)
-				var data = v1{ID: val.Parse.ID, Name: val.Parse.Text, Nsfw: val.Nsfw, API: v1API{Root: root, Path: cx.Path}, Status: true}
+				var data = v1{ID: val.Parse.ID, Name: val.Parse.Text, Logo: val.Logo, Nsfw: val.Nsfw, API: v1API{Root: root, Path: cx.Path}, Status: true}
 				yoyoJSON = append(yoyoJSON, data)
 			} else {
 				err++
@@ -432,7 +508,7 @@ func dumpToJSON(_result map[uint64][]Result) (int, int) {
 
 func init() {
 	req.SetUserAgent(ua)
-	req.SetTimeout(time.Second * 6)
+	req.SetTimeout(time.Second * 9)
 	req.EnableInsecureSkipVerify()
 }
 
