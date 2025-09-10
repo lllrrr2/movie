@@ -469,9 +469,16 @@ class TVUIState extends State<TVUI>
   }
 
   @override
-  void dispose() async {
+  void setState(VoidCallback fn) {
+    if (mounted) super.setState(fn);
+  }
+
+  @override
+  void dispose() {
     _playPauseIconTimer?.cancel();
-    await player.dispose();
+    player.dispose().catchError((error) {
+      debugPrint("player dispose error: $error");
+    });
     if (GetPlatform.isDesktop) {
       hideCursor.showCursor();
       windowManager.removeListener(this);
