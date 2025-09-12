@@ -439,26 +439,18 @@ class _PlayViewState extends State<PlayView> with AfterLayoutMixin {
     return Positioned.fill(child: videoView);
   }
 
-  Widget _oneView(bool isDesktop) {
-    var cardHeight = context.mediaQuery.size.width * (6 / 12);
-    var hh = context.mediaQuery.size.height * .51;
-    if (cardHeight >= hh) cardHeight = hh;
-    if (cardHeight <= 200) cardHeight = 240;
-    return SizedBox(
-      width: isDesktop ? context.mediaQuery.size.width * .72 : double.infinity,
-      height: isDesktop ? double.infinity : cardHeight,
-      child: Stack(
-        children: [
-          if (videoKernel.isMediaKit) 
-            _buildMediaKit() 
-          else 
-            Positioned.fill(child: _buildCoverImage()),
-        ],
-      ),
+  Widget _oneView(bool isLargeScreen) {
+    return Stack(
+      children: [
+        if (videoKernel.isMediaKit)
+          _buildMediaKit()
+        else
+          Positioned.fill(child: _buildCoverImage()),
+      ],
     );
   }
 
-  Widget _twoView(bool isDesktop) {
+  Widget _twoView(bool isLargeScreen) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -580,7 +572,7 @@ class _PlayViewState extends State<PlayView> with AfterLayoutMixin {
               }
               return GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: isDesktop ? 2 : playListGridCount,
+                  crossAxisCount: isLargeScreen ? 2 : playListGridCount,
                   mainAxisExtent: 48,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
@@ -713,36 +705,25 @@ class _PlayViewState extends State<PlayView> with AfterLayoutMixin {
 
   Widget _realBodyView() {
     var width = context.mediaQuery.size.width;
-    // var height = context.mediaQuery.size.height;
-    // var isPad = (width / height) > 1.38; // 宽高比大于 1.38 认为是 Pad(大屏)
-    var isDesktop = width >= 720 && (GetPlatform.isDesktop/* || isPad*/);
-    late Widget body;
-    if (isDesktop) {
-      body = Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _oneView(true),
-          if (isDesktop)
-            Container(
-              width: 1,
-              height: double.infinity,
-              color: (context.isDarkMode ? Colors.white : Colors.black)
-                  .withValues(alpha: .12),
-            ),
-          Expanded(child: _twoView(true)),
-        ],
-      );
-    } else {
-      body = Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _oneView(false),
-          Expanded(child: _twoView(false)),
-        ],
-      );
-    }
+    var height = context.mediaQuery.size.height;
+    var isPad = (width / height) > 1.38; // 宽高比大于 1.38 认为是 Pad(大屏)
+    var isLargeScreen = width > 720 && isPad;
+    var one = isLargeScreen ? 16 : 9;
+    var two = isLargeScreen ? 9 : 16;
+    var sep = Container(
+      width: 1,
+      height: double.infinity,
+      color: (context.isDarkMode ? Colors.white : Colors.black)
+          .withValues(alpha: .12),
+    );
+    Widget body = Flex(
+      direction: isLargeScreen ? Axis.horizontal : Axis.vertical,
+      children: [
+        Expanded(flex: one, child: _oneView(isLargeScreen)),
+        if (isLargeScreen) sep,
+        Expanded(flex: two, child: _twoView(isLargeScreen)),
+      ],
+    );
     double topbarHeight = GetPlatform.isDesktop ? 56 : 48;
     return Stack(
       children: [
@@ -753,7 +734,7 @@ class _PlayViewState extends State<PlayView> with AfterLayoutMixin {
         Positioned(
           left: 0,
           top: 0,
-          width: isDesktop ? width * .72 : width,
+          width: width,
           height: topbarHeight,
           child: MoveWindow(
             child: Container(
