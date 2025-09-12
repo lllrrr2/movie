@@ -203,6 +203,9 @@ class _PlayViewState extends State<PlayView> with AfterLayoutMixin {
     super.dispose();
   }
 
+  // NOTE(d1y): 是否显示封面(只在未播放过时展示)
+  var showVideoCover = true;
+
   Future<void> handlePlay(int tabIndex, int index) async {
     var realPlaylist = playlist[tabIndex].datas;
     var curr = playlist[tabIndex].datas[index];
@@ -224,6 +227,8 @@ class _PlayViewState extends State<PlayView> with AfterLayoutMixin {
     if (isUpSort) {
       realIndex = getReversalIndex(realPlaylist, index);
     }
+    showVideoCover = false;
+    setState(() {});
     Future.delayed(const Duration(milliseconds: 124), () {
       play.updatePlayState(tabIndex, index, realIndex, curr.name);
     });
@@ -327,9 +332,9 @@ class _PlayViewState extends State<PlayView> with AfterLayoutMixin {
       ),
     );
     Widget videoView = Video(
-      fill: Colors.black.withValues(alpha: .21),
       fit: mediaKitFit,
-      placeholder: _buildCoverImage(),
+      fill: Colors.black,
+      placeholder: showVideoCover ? _buildCoverImage() : null,
       controller: controller,
       onEnterFullscreen: () async {
         await defaultEnterNativeFullscreen();
