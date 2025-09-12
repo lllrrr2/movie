@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:catmovie/app/modules/home/views/auto_update.dart';
+import 'package:catmovie/app/widget/k_body.dart';
 import 'package:catmovie/app/widget/window_appbar.dart';
 import 'package:catmovie/app/widget/zoom.dart';
 import 'package:catmovie/utils/boop.dart';
@@ -442,156 +443,159 @@ class _SettingsViewState extends State<SettingsView>
         centerTitle: true,
         actions: [SizedBox.shrink()],
       ),
-      body: SettingsList(
-        applicationType: ApplicationType.cupertino,
-        lightTheme:
-            SettingsThemeData(settingsListBackground: Colors.transparent),
-        darkTheme:
-            SettingsThemeData(settingsListBackground: Colors.transparent),
-        sections: [
-          SettingsSection(
-            title: Text('常规设置'),
-            tiles: <SettingsTile>[
-              if (!autoDarkMode)
+      body: ScrollConfiguration(
+        behavior: ScrollBehavior().copyWith(scrollbars: false),
+        child: SettingsList(
+          applicationType: ApplicationType.cupertino,
+          lightTheme:
+              SettingsThemeData(settingsListBackground: Colors.transparent),
+          darkTheme:
+              SettingsThemeData(settingsListBackground: Colors.transparent),
+          sections: [
+            SettingsSection(
+              title: Text('常规设置'),
+              tiles: <SettingsTile>[
+                if (!autoDarkMode)
+                  SettingsTile.switchTile(
+                    onToggle: (value) {
+                      isDark = value;
+                    },
+                    initialValue: isDark,
+                    leading: Icon(Icons.settings_brightness),
+                    title: Text('深色'),
+                  ),
                 SettingsTile.switchTile(
                   onToggle: (value) {
-                    isDark = value;
+                    autoDarkMode = value;
                   },
-                  initialValue: isDark,
-                  leading: Icon(Icons.settings_brightness),
-                  title: Text('深色'),
+                  initialValue: autoDarkMode,
+                  leading: Icon(CupertinoIcons.moon_stars_fill),
+                  title: Text('深色跟随系统'),
                 ),
-              SettingsTile.switchTile(
-                onToggle: (value) {
-                  autoDarkMode = value;
-                },
-                initialValue: autoDarkMode,
-                leading: Icon(CupertinoIcons.moon_stars_fill),
-                title: Text('深色跟随系统'),
-              ),
-              SettingsTile.navigation(
-                leading: Icon(Icons.add_box),
-                title: Text('解析线路管理'),
-                onPressed: (cx) {
-                  EasyLoading.dismiss();
-                  Get.to(() => const ParseVipManagePageView());
-                },
-                value: SimpleTag(text: parseVipListWithText),
-              ),
-              SettingsTile.navigation(
-                leading: Icon(Icons.video_library),
-                title: Text('视频源管理'),
-                onPressed: (cx) {
-                  EasyLoading.dismiss();
-                  handleSourceHelp();
-                },
-                value: SimpleTag(text: mirrorLengthWithText),
-              ),
-              SettingsTile(
-                leading: Icon(CupertinoIcons.macwindow),
-                title: Text("播放器内核"),
-                onPressed: (cx) {
-                  final RenderBox renderBox = kVideoKernelBtnKey.currentContext!
-                      .findRenderObject() as RenderBox;
-                  final Offset btnPosition =
-                      renderBox.localToGlobal(Offset.zero);
-                  final Size btnSize = renderBox.size;
-                  final double targetHeight = btnSize.height;
-                  final Rect targetRect = Rect.fromLTWH(
-                    btnPosition.dx - 6,
-                    btnPosition.dy + 6,
-                    btnSize.width,
-                    targetHeight,
-                  );
-                  showPullDownMenu(
-                    context: cx,
-                    items: _buildVideoKernel(),
-                    position: targetRect,
-                  );
-                },
-                trailing: PullDownButton(
-                  key: kVideoKernelBtnKey,
-                  menuOffset: 9,
-                  itemBuilder: (cx) {
-                    return _buildVideoKernel();
+                SettingsTile.navigation(
+                  leading: Icon(Icons.add_box),
+                  title: Text('解析线路管理'),
+                  onPressed: (cx) {
+                    EasyLoading.dismiss();
+                    Get.to(() => const ParseVipManagePageView());
                   },
-                  buttonBuilder: (cx, showMenu) {
-                    return CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        EasyLoading.dismiss();
-                        showMenu();
-                      },
-                      child: Text(_videoKernel.name),
+                  value: SimpleTag(text: parseVipListWithText),
+                ),
+                SettingsTile.navigation(
+                  leading: Icon(Icons.video_library),
+                  title: Text('视频源管理'),
+                  onPressed: (cx) {
+                    EasyLoading.dismiss();
+                    handleSourceHelp();
+                  },
+                  value: SimpleTag(text: mirrorLengthWithText),
+                ),
+                SettingsTile(
+                  leading: Icon(CupertinoIcons.macwindow),
+                  title: Text("播放器内核"),
+                  onPressed: (cx) {
+                    final RenderBox renderBox = kVideoKernelBtnKey.currentContext!
+                        .findRenderObject() as RenderBox;
+                    final Offset btnPosition =
+                        renderBox.localToGlobal(Offset.zero);
+                    final Size btnSize = renderBox.size;
+                    final double targetHeight = btnSize.height;
+                    final Rect targetRect = Rect.fromLTWH(
+                      btnPosition.dx - 6,
+                      btnPosition.dy + 6,
+                      btnSize.width,
+                      targetHeight,
+                    );
+                    showPullDownMenu(
+                      context: cx,
+                      items: _buildVideoKernel(),
+                      position: targetRect,
+                    );
+                  },
+                  trailing: PullDownButton(
+                    key: kVideoKernelBtnKey,
+                    menuOffset: 9,
+                    itemBuilder: (cx) {
+                      return _buildVideoKernel();
+                    },
+                    buttonBuilder: (cx, showMenu) {
+                      return CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          EasyLoading.dismiss();
+                          showMenu();
+                        },
+                        child: Text(_videoKernel.name),
+                      );
+                    },
+                  ),
+                ),
+                SettingsTile.switchTile(
+                  onToggle: updateNSFW,
+                  initialValue: home.isNsfw,
+                  leading: Builder(builder: (context) {
+                    return SvgPicture.string(
+                      r"""
+      <svg t="1757687096526" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7270" width="200" height="200"><path d="M624.298042 931.498418a80.895919 80.895919 0 0 1-58.026608 24.234642h-108.543892a80.895919 80.895919 0 0 1-58.026608-24.234642 34.133299 34.133299 0 0 0-48.469285 48.469285A150.186516 150.186516 0 0 0 457.727542 1023.999659h108.543892a150.869182 150.869182 0 0 0 106.495893-44.031956 34.133299 34.133299 0 0 0-48.469285-48.469285zM989.865677 477.866871h-76.799923L798.036535 74.411275A102.399898 102.399898 0 0 0 699.391301 0.000683h-64.170603a102.399898 102.399898 0 0 0-57.00261 17.066649l-47.103952 31.743969a34.133299 34.133299 0 0 1-37.887963 0L445.780888 17.067332a102.399898 102.399898 0 0 0-57.00261-17.066649H324.607675a102.399898 102.399898 0 0 0-98.645234 74.410592L110.933222 477.866871H34.133299a34.133299 34.133299 0 0 0 0 68.266599h955.732378a34.133299 34.133299 0 0 0 0-68.266599zM291.839708 93.184589a34.133299 34.133299 0 0 1 34.133299-24.917308h64.170603a34.133299 34.133299 0 0 1 19.114647 5.802661l47.445286 31.402635a102.399898 102.399898 0 0 0 113.322554 0l47.445286-31.402635a34.133299 34.133299 0 0 1 17.749315-5.802661h64.170603a34.133299 34.133299 0 0 1 34.133299 24.575975L803.15653 341.333675H220.842446zM181.930485 477.866871l19.45598-68.266598h621.226046l19.45598 68.266598zM887.465779 648.533367h-3.41333a91.477242 91.477242 0 0 0-89.087911-68.266598h-156.33051a91.818575 91.818575 0 0 0-88.746578 68.266598h-75.775924a91.818575 91.818575 0 0 0-88.746578-68.266598H229.034438a91.135909 91.135909 0 0 0-88.746578 68.266598H136.533197a34.133299 34.133299 0 0 0 0 68.266599v44.031956A92.501241 92.501241 0 0 0 229.034438 853.333163h115.370551a92.501241 92.501241 0 0 0 76.799923-41.301292L462.506204 750.933265a86.015914 86.015914 0 0 0 13.311987-34.133299h72.362594a81.919918 81.919918 0 0 0 13.65332 34.133299l40.959959 61.781272A91.818575 91.818575 0 0 0 679.593987 853.333163h115.370551A92.501241 92.501241 0 0 0 887.465779 760.831922V716.799966a34.133299 34.133299 0 0 0 0-68.266599z m-477.866189 50.517283a24.575975 24.575975 0 0 1-4.095996 13.65332l-40.959959 61.439939a24.917308 24.917308 0 0 1-20.138646 10.922655H229.034438a24.234642 24.234642 0 0 1-24.234643-24.234642v-88.063912a24.575975 24.575975 0 0 1 24.234643-24.234643h156.33051a24.234642 24.234642 0 0 1 24.234642 24.234643z m409.599591 61.781272a24.234642 24.234642 0 0 1-24.234643 24.234642h-115.370551a24.234642 24.234642 0 0 1-19.797313-10.581322l-41.301292-62.122605a22.86931 22.86931 0 0 1-4.095996-13.311987v-26.28264a24.234642 24.234642 0 0 1 24.234642-24.234643h156.33051a24.575975 24.575975 0 0 1 24.234643 24.234643z" fill="#0182DF" p-id="7271"></path></svg>
+      """,
+                      colorFilter: ColorFilter.mode(
+                        SettingsTheme.of(context).themeData.leadingIconsColor ??
+                            Colors.transparent,
+                        BlendMode.srcIn,
+                      ),
+                      width: 24,
+                      height: 24,
+                    );
+                  }),
+                  title: Text('绅士模式'),
+                ),
+              ],
+            ),
+            SettingsSection(
+              title: Text('其他设置'),
+              tiles: <AbstractSettingsTile>[
+                SettingsTile.navigation(
+                  leading: Icon(CupertinoIcons.refresh_circled_solid),
+                  title: Text('应用更新'),
+                  onPressed: (cx) {
+                    showCupertinoModalBottomSheet(
+                      context: cx,
+                      builder: (_) => AutoUpdate(),
                     );
                   },
                 ),
-              ),
-              SettingsTile.switchTile(
-                onToggle: updateNSFW,
-                initialValue: home.isNsfw,
-                leading: Builder(builder: (context) {
-                  return SvgPicture.string(
-                    r"""
-<svg t="1757687096526" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7270" width="200" height="200"><path d="M624.298042 931.498418a80.895919 80.895919 0 0 1-58.026608 24.234642h-108.543892a80.895919 80.895919 0 0 1-58.026608-24.234642 34.133299 34.133299 0 0 0-48.469285 48.469285A150.186516 150.186516 0 0 0 457.727542 1023.999659h108.543892a150.869182 150.869182 0 0 0 106.495893-44.031956 34.133299 34.133299 0 0 0-48.469285-48.469285zM989.865677 477.866871h-76.799923L798.036535 74.411275A102.399898 102.399898 0 0 0 699.391301 0.000683h-64.170603a102.399898 102.399898 0 0 0-57.00261 17.066649l-47.103952 31.743969a34.133299 34.133299 0 0 1-37.887963 0L445.780888 17.067332a102.399898 102.399898 0 0 0-57.00261-17.066649H324.607675a102.399898 102.399898 0 0 0-98.645234 74.410592L110.933222 477.866871H34.133299a34.133299 34.133299 0 0 0 0 68.266599h955.732378a34.133299 34.133299 0 0 0 0-68.266599zM291.839708 93.184589a34.133299 34.133299 0 0 1 34.133299-24.917308h64.170603a34.133299 34.133299 0 0 1 19.114647 5.802661l47.445286 31.402635a102.399898 102.399898 0 0 0 113.322554 0l47.445286-31.402635a34.133299 34.133299 0 0 1 17.749315-5.802661h64.170603a34.133299 34.133299 0 0 1 34.133299 24.575975L803.15653 341.333675H220.842446zM181.930485 477.866871l19.45598-68.266598h621.226046l19.45598 68.266598zM887.465779 648.533367h-3.41333a91.477242 91.477242 0 0 0-89.087911-68.266598h-156.33051a91.818575 91.818575 0 0 0-88.746578 68.266598h-75.775924a91.818575 91.818575 0 0 0-88.746578-68.266598H229.034438a91.135909 91.135909 0 0 0-88.746578 68.266598H136.533197a34.133299 34.133299 0 0 0 0 68.266599v44.031956A92.501241 92.501241 0 0 0 229.034438 853.333163h115.370551a92.501241 92.501241 0 0 0 76.799923-41.301292L462.506204 750.933265a86.015914 86.015914 0 0 0 13.311987-34.133299h72.362594a81.919918 81.919918 0 0 0 13.65332 34.133299l40.959959 61.781272A91.818575 91.818575 0 0 0 679.593987 853.333163h115.370551A92.501241 92.501241 0 0 0 887.465779 760.831922V716.799966a34.133299 34.133299 0 0 0 0-68.266599z m-477.866189 50.517283a24.575975 24.575975 0 0 1-4.095996 13.65332l-40.959959 61.439939a24.917308 24.917308 0 0 1-20.138646 10.922655H229.034438a24.234642 24.234642 0 0 1-24.234643-24.234642v-88.063912a24.575975 24.575975 0 0 1 24.234643-24.234643h156.33051a24.234642 24.234642 0 0 1 24.234642 24.234643z m409.599591 61.781272a24.234642 24.234642 0 0 1-24.234643 24.234642h-115.370551a24.234642 24.234642 0 0 1-19.797313-10.581322l-41.301292-62.122605a22.86931 22.86931 0 0 1-4.095996-13.311987v-26.28264a24.234642 24.234642 0 0 1 24.234642-24.234643h156.33051a24.575975 24.575975 0 0 1 24.234643 24.234643z" fill="#0182DF" p-id="7271"></path></svg>
-""",
-                    colorFilter: ColorFilter.mode(
-                      SettingsTheme.of(context).themeData.leadingIconsColor ??
-                          Colors.transparent,
-                      BlendMode.srcIn,
-                    ),
-                    width: 24,
-                    height: 24,
-                  );
-                }),
-                title: Text('绅士模式'),
-              ),
-            ],
-          ),
-          SettingsSection(
-            title: Text('其他设置'),
-            tiles: <AbstractSettingsTile>[
-              SettingsTile.navigation(
-                leading: Icon(CupertinoIcons.refresh_circled_solid),
-                title: Text('应用更新'),
-                onPressed: (cx) {
-                  showCupertinoModalBottomSheet(
-                    context: cx,
-                    builder: (_) => AutoUpdate(),
-                  );
-                },
-              ),
-              SettingsTile.navigation(
-                leading: Icon(CupertinoIcons.arrow_down_right_square_fill),
-                title: Text('视频源帮助'),
-                onPressed: (cx) {
-                  Get.to(() => const SourceHelpTable());
-                },
-              ),
-              SettingsTile.navigation(
-                leading: Icon(CupertinoIcons.clear_thick_circled),
-                title: Text('清除缓存'),
-                onPressed: handleCleanCacheBefore,
-              ),
-              SettingsTile.navigation(
-                leading: Icon(CupertinoIcons.lab_flask_solid),
-                title: Text('开源协议'),
-                onPressed: (cx) {
-                  showCupertinoModalBottomSheet(
-                    context: cx,
-                    builder: (_) => SizedBox(
-                      width: double.infinity,
-                      height: Get.height * .72,
-                      child: cupertinoLicensePage,
-                    ),
-                  );
-                },
-              ),
-              Copyright(),
-              BottomNavigationBarPlaceholder(),
-            ],
-          ),
-        ],
+                SettingsTile.navigation(
+                  leading: Icon(CupertinoIcons.arrow_down_right_square_fill),
+                  title: Text('视频源帮助'),
+                  onPressed: (cx) {
+                    Get.to(() => const SourceHelpTable());
+                  },
+                ),
+                SettingsTile.navigation(
+                  leading: Icon(CupertinoIcons.clear_thick_circled),
+                  title: Text('清除缓存'),
+                  onPressed: handleCleanCacheBefore,
+                ),
+                SettingsTile.navigation(
+                  leading: Icon(CupertinoIcons.lab_flask_solid),
+                  title: Text('开源协议'),
+                  onPressed: (cx) {
+                    showCupertinoModalBottomSheet(
+                      context: cx,
+                      builder: (_) => SizedBox(
+                        width: double.infinity,
+                        height: Get.height * .72,
+                        child: cupertinoLicensePage,
+                      ),
+                    );
+                  },
+                ),
+                Copyright(),
+                BottomNavigationBarPlaceholder(),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
