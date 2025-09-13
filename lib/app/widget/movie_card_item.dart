@@ -108,7 +108,7 @@ class MovieCardItem extends StatelessWidget {
                   title,
                   maxLines: 1,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     color: context.isDarkMode ? Colors.white : Colors.black,
                   ),
                   overflow: TextOverflow.ellipsis,
