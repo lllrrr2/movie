@@ -402,12 +402,13 @@ class MirrorCard extends StatelessWidget {
               ),
             ),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
           child: Row(
+            spacing: 12,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(width: 12),
-              Builder(builder: (context) {
+              // ignore: dead_code
+              if (false) Builder(builder: (context) {
                 // NOTE(d1y): 这里的 logo 展示不太好看, 所以先不要了, 等待展示更好的图标
                 var logo = item.meta.logo;
                 if (logo.isEmpty || true) {
@@ -424,10 +425,9 @@ class MirrorCard extends StatelessWidget {
                   width: 42,
                 );
               }),
-              const SizedBox(width: 12),
               Expanded(
                 child: Column(
-                  spacing: _desc.isEmpty ? 0 : 3,
+                  spacing: 3,
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -435,9 +435,9 @@ class MirrorCard extends StatelessWidget {
                       _title,
                       style: TextStyle(
                         color: textColor,
-                        fontSize: 14,
+                        fontSize: 18,
                         decoration: TextDecoration.none,
-                        fontWeight: FontWeight.w300,
+                        fontWeight: current ? FontWeight.bold : FontWeight.w300,
                       ),
                     ),
                     _desc.isEmpty
