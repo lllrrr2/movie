@@ -45,18 +45,45 @@ declare global {
     playlist: Array<IPlaylist>
   }
 
+  interface IconfigExtraJS {
+    category: string
+    home: string
+    search: string
+    detail: string
+    parseIframe: string
+  }
+
+  interface IconfigExtra {
+    jiexiUrl?: string
+    js?: IconfigExtraJS
+  }
+
+  // TODO(d1y): update movie/schema/*.json
+  interface Iconfig {
+    id: string
+    name: string
+    type: 0 | 1
+    api: string
+    nsfw: boolean
+    logo?: string
+    desc?: string
+    extra?: IconfigExtra
+  }
+
+  type HandleConfig = () => Iconfig
   type HandleCategory = () => Promise<ICategory[]>
   type HandleHome = () => Promise<IMovie[]>
   type HandleDetail = () => Promise<IMovie[]>
   type HandleSearch = () => Promise<IMovie[]>
-  type HandleParseIframe = () => Promise<string[]>
+  type HandleParseIframe = () => Promise<string[] | string>
 
   abstract class Handle {
-    getCategory: HandleCategory
-    getHome: HandleHome
-    getDetail: HandleDetail
-    getSearch: HandleSearch
-    parseIframe: HandleParseIframe
+    getConfig: HandleConfig
+    getCategory?: HandleCategory
+    getHome?: HandleHome
+    getDetail?: HandleDetail
+    getSearch?: HandleSearch
+    parseIframe?: HandleParseIframe
   }
 
 }
