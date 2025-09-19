@@ -149,6 +149,7 @@ class _PlayViewState extends State<PlayView> with AfterLayoutMixin {
     if (videoKernel.isMediaKit) {
       MPVLogLevel logLevel = MPVLogLevel.info;
       if (CMEnv.isDebug) {
+        debugPrint("video log level is debug");
         logLevel = MPVLogLevel.debug;
       }
       player = Player(
@@ -217,6 +218,7 @@ class _PlayViewState extends State<PlayView> with AfterLayoutMixin {
       videoKernel,
       player,
       isUpSort,
+      play.movieItem,
     );
     if (!isOk) {
       boop.error();

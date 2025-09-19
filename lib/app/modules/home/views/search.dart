@@ -620,6 +620,7 @@ class _SearchV2State extends State<SearchV2> with AfterLayoutMixin {
                                   throw Exception("未找到对应的源");
                                 }
                                 data = await curr.getDetail(id);
+                                data.setContext(curr.meta);
                               });
                               if (!isNext) return;
                             }

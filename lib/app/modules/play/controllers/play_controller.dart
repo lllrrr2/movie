@@ -413,6 +413,7 @@ document.addEventListener('DOMContentLoaded', function() {
     VideoKernel videoKernel,
     Player? mediaKitPlayer,
     bool isUpSort,
+    VideoDetail? context,
   ) async {
     var url = curr.url;
     url = getPlayUrl(url);
@@ -502,10 +503,21 @@ document.addEventListener('DOMContentLoaded', function() {
           if (url.isEmpty) return false;
         }
         if (mediaKitPlayer == null) return false;
-        mediaKitPlayer.open(Media(url, httpHeaders: {
-          "user-agent":
-              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
-        }));
+        var header = {
+          "User-Agent":
+              'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1.1 Mobile/15E148 Safari/604.1',
+          "sec-ch-ua-platform": "macOS",
+          'sec-ch-ua': '"Not=A?Brand";v="24", "Chromium";v="140"',
+          'DNT': '1'
+        };
+        if (context != null) {
+          var cx = context.getContext();
+          if (cx != null) {
+            // NOTE(d1y): 在一些源中, 如果不传递 Referer 则无法播放
+            header['Referer'] = cx.api;
+          }
+        }
+        mediaKitPlayer.open(Media(url, httpHeaders: header));
         break;
     }
 
