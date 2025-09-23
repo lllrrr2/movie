@@ -21,6 +21,7 @@ class SourceUtils {
       var sourceType = _getSourceType(data);
       Map<String, dynamic> extraMap = {
         'jiexiUrl': data['jiexiUrl'] ?? '',
+        'gfw': data['gfw'] ?? false,
       };
 
       // 如果有 JS 配置，添加到 extra 中
@@ -78,6 +79,7 @@ class SourceUtils {
     // 从 extra 中获取 jiexiUrl 和 js
     var extra = rawData['extra'] as Map<String, dynamic>? ?? {};
     var jiexiUrl = extra['jiexiUrl'];
+    var gfw = extra['gfw'];
     var js = extra['js'];
 
     String apiUrl = '';
@@ -103,6 +105,7 @@ class SourceUtils {
         'desc': rawData["desc"] ?? "",
         'nsfw': isNsfw,
         'jiexiUrl': jiexiUrl,
+        'gfw': gfw,
         'api': apiUrl,
         'status': rawData['status'] ?? true,
         'type': rawData['type'],
@@ -269,6 +272,7 @@ class SourceUtils {
           'desc': e.meta.desc,
           'nsfw': e.meta.isNsfw,
           'jiexiUrl': e.meta.extra['jiexiUrl'] ?? '',
+          'gfw': e.meta.extra['gfw'] ?? false,
           'api': e.meta.api,
           'id': e.meta.id,
           'status': e.meta.status,

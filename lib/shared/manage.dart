@@ -29,6 +29,7 @@ class SpiderManage {
     var result = data.map((item) {
       Map<String, dynamic> extraMap = {
         'jiexiUrl': item.extra.jiexiUrl ?? '',
+        'gfw': item.extra.gfw ?? false,
       };
 
       // 如果有 JS 配置，添加到 extra 中
@@ -181,7 +182,9 @@ class SpiderManage {
 
   static void mergeSpiderFromMeta(List<SourceMeta> data) {
     var output = data.map((item) {
-      var extra = MirrorExtra()..jiexiUrl = item.extra['jiexiUrl'];
+      var extra = MirrorExtra()
+      ..jiexiUrl = item.extra['jiexiUrl']
+      ..gfw = item.extra['gfw'];
 
       // 如果有 JS 配置，保存到 MirrorExtra 中
       if (item.extra.containsKey('js') && item.extra['js'] is Map) {

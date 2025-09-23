@@ -16,6 +16,7 @@ class MirrorExtraJS {
 @embedded
 class MirrorExtra {
   String? jiexiUrl;
+  bool? gfw;
   MirrorExtraJS? js;
 }
 
