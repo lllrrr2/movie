@@ -170,7 +170,10 @@ class _SettingsViewState extends State<SettingsView>
   void addMirrorMangerTextareaLister() {
     editingControllerValue =
         getSettingAsKeyIdent<String>(SettingsAllKey.mirrorTextarea);
+    _lines = editingControllerValue;
     _editingController.addListener(() {
+      _lines = editingControllerValue;
+      if (mounted) setState(() {});
       updateSetting(SettingsAllKey.mirrorTextarea, editingControllerValue);
     });
   }
@@ -229,6 +232,11 @@ class _SettingsViewState extends State<SettingsView>
     _editingController.text = newVal;
   }
 
+  var _lines = "";
+  int get realLineLength {
+    return _lines.split('\n').where((element) => element.isNotEmpty).length;
+  }
+
   Future<void> handleDiglogTap(HandleDiglogTapType type) async {
     switch (type) {
       case HandleDiglogTapType.clean:
@@ -252,28 +260,7 @@ class _SettingsViewState extends State<SettingsView>
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             child: Center(
-              child: Column(
-                spacing: 42,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                  ),
-                  CupertinoButton.filled(
-                    child: const Text(
-                      "关闭",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                    onPressed: () {
-                      Get.back();
-                    },
-                  ),
-                ],
-              ),
+              child: kActivityIndicator,
             ),
           ),
           barrierColor: CupertinoColors.black.withValues(alpha: .9),
@@ -361,170 +348,138 @@ class _SettingsViewState extends State<SettingsView>
       width = 620;
     }
     showCupertinoModalBottomSheet(
-        context: context,
-        builder: (_) {
-          return SizedBox(
-            width: width,
-            height: context.mediaQuery.size.height * .72,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                spacing: 9,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        spacing: 6,
-                        children: [
-                          Icon(
+      context: context,
+      builder: (_) {
+        return SizedBox(
+          width: width,
+          height: context.mediaQuery.size.height * .72,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              spacing: 9,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      spacing: 12,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: context.isDarkMode
+                                ? Colors.blue.shade700.withValues(alpha: .3)
+                                : Colors.blue.shade100,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
                             CupertinoIcons.cube_box,
                             size: 24,
+                            color: context.isDarkMode
+                                ? Colors.blue.shade300
+                                : Colors.blue.shade700,
                           ),
-                          Text(
-                            "源管理",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        spacing: 6,
-                        children: [
-                          Zoom(
-                            child: IconButton(
-                              icon: SvgPicture.string(
-                                r"""
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "源管理",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: context.isDarkMode
+                                    ? Colors.white
+                                    : Colors.grey.shade800,
+                              ),
+                            ),
+                            Text(
+                              "$realLineLength 个数据源",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: context.isDarkMode
+                                    ? Colors.grey.shade400
+                                    : Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      spacing: 9,
+                      children: [
+                        Zoom(
+                          child: IconButton(
+                            icon: SvgPicture.string(
+                              r"""
 <svg t="1758656052478" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="24530" width="200" height="200"><path d="M384 298.666667V128q0-35.328 25.002667-60.330667T469.333333 42.666667h85.333334q35.328 0 60.330666 25.002666T640 128v170.666667h-42.666667V256h202.922667q28.245333 0 50.944 16.853333 22.656 16.896 30.805333 43.946667l38.4 128q12.288 41.088-13.269333 75.477333-25.6 34.389333-68.48 34.389334H185.344q-42.88 0-68.48-34.389334-25.6-34.389333-13.226667-75.477333l38.4-128q8.106667-27.050667 30.762667-43.946667Q195.498667 256 223.744 256H426.666667v42.666667H384z m85.333333 0q0 4.181333-0.853333 8.32-0.768 4.138667-2.389333 8.021333-1.621333 3.84-3.968 7.381333-2.304 3.456-5.290667 6.442667-2.986667 2.986667-6.442667 5.290667-3.498667 2.346667-7.381333 3.968-3.882667 1.621333-8.021333 2.432Q430.848 341.333333 426.666667 341.333333H223.744l-38.4 128h653.312l-38.4-128H597.333333q-4.224 0-8.32-0.853333-4.138667-0.768-8.021333-2.389333-3.84-1.621333-7.381333-3.968-3.498667-2.304-6.442667-5.290667-2.986667-2.986667-5.333333-6.442667-2.304-3.498667-3.925334-7.381333-1.621333-3.882667-2.432-8.021333Q554.666667 302.848 554.666667 298.666667V128h-85.333334v170.666667z" fill="#333333" p-id="24531"></path><path d="M862.08 868.565333q12.586667-114.602667 12.586667-190.634666 0-103.424-23.253334-178.56-0.981333-3.242667-2.474666-6.272-1.536-3.029333-3.498667-5.802667-1.962667-2.773333-4.352-5.205333-2.389333-2.432-5.12-4.437334-2.730667-2.005333-5.717333-3.584-3.029333-1.536-6.272-2.602666-3.2-1.066667-6.570667-1.578667Q814.08 469.333333 810.666667 469.333333H192q-4.181333 0-8.32 0.853334-4.138667 0.768-8.021333 2.389333-3.84 1.621333-7.381334 3.968-3.456 2.304-6.442666 5.290667-2.986667 2.986667-5.290667 6.442666-2.346667 3.498667-3.968 7.381334-1.621333 3.882667-2.432 8.021333-0.810667 4.138667-0.810667 8.32v1.664q2.645333 67.541333 0 163.072-1.706667 63.36-71.509333 169.258667-28.544 43.306667-4.138667 89.173333Q98.261333 981.333333 150.4 981.333333h585.344q48.384 0 84.608-32.170666 36.437333-32.384 41.728-80.64zM777.813333 554.666667q11.562667 53.333333 11.562667 123.264 0 71.338667-12.074667 181.333333-1.706667 15.573333-13.568 26.112-11.946667 10.624-27.946666 10.624H150.357333q-0.853333 0-1.322666-0.896-0.597333-1.152 0.042666-2.133333 83.2-126.208 85.589334-213.888 1.877333-69.12 1.109333-124.416h541.994667z" fill="#333333" p-id="24532"></path><path d="M333.056 963.882667Q426.666667 836.309333 426.666667 682.666667H341.333333q0 125.653333-77.056 230.784l68.778667 50.432zM594.730667 953.344Q640 829.866667 640 682.666667h-85.333333q0 132.053333-40.064 241.322666l80.128 29.354667z" fill="#333333" p-id="24533"></path></svg>
 """,
-                                width: 24,
-                                height: 24,
-                                colorFilter: ColorFilter.mode(
-                                    context.isDarkMode
-                                        ? Colors.white
-                                        : Colors.black,
-                                    BlendMode.srcIn),
-                              ),
-                              onPressed: () {
-                                handleDiglogTap(HandleDiglogTapType.clean);
-                              },
+                              width: 24,
+                              height: 24,
+                              colorFilter: ColorFilter.mode(
+                                  context.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                  BlendMode.srcIn),
                             ),
+                            onPressed: () {
+                              handleDiglogTap(HandleDiglogTapType.clean);
+                            },
                           ),
-                          Zoom(
-                            child: IconButton(
-                              icon: SvgPicture.string(
-                                r"""
+                        ),
+                        Zoom(
+                          child: IconButton(
+                            icon: SvgPicture.string(
+                              r"""
 <svg t="1758655940551" class="icon" viewBox="0 0 1028 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="23526" width="200" height="200"><path d="M1002.289973 8.914836c-12.795191-8.530127-34.12051-12.795191-46.915701-4.265064L25.590382 486.601972c-21.325319 12.795191-29.855446 38.385573-21.325318 59.710892 4.265064 8.530127 12.795191 17.060255 21.325318 21.325319L251.638759 682.794903c21.325319 8.530127 51.180765 0 59.710892-21.325319 8.530127-21.325319 0-46.915701-21.325318-59.710892l-145.012167-72.506083 656.819812-341.205097c-89.566338 110.891657-221.783313 268.699014-294.289396 349.735225-106.626593 123.686848-119.421784 221.783313-119.421784 302.819523v136.482039c0 25.590382 21.325319 46.915701 46.915701 46.915701 25.590382 0 46.915701-21.325319 46.915701-46.915701v-136.482039c0-63.975956 8.530127-136.482039 98.096465-243.108631 81.036211-93.831402 247.373695-298.55446 332.67497-400.915989l-85.301275 673.880066-204.723058-102.361529c-21.325319-8.530127-51.180765 0-59.710892 21.325319-8.530127 21.325319 0 46.915701 21.325319 59.710892l260.168886 132.216975c12.795191 8.530127 29.855446 8.530127 42.650637 0 12.795191-8.530127 21.325319-21.325319 25.590383-34.12051l115.15672-895.66338c-4.265064-17.060255-8.530127-34.12051-25.590382-42.650637z" fill="#474F5F" p-id="23527"></path></svg>
 """,
-                                width: 24,
-                                height: 24,
-                                colorFilter: ColorFilter.mode(
-                                    context.isDarkMode
-                                        ? Colors.white
-                                        : Colors.black,
-                                    BlendMode.srcIn),
-                              ),
-                              onPressed: () {
-                                boop.selection();
-                                handleDiglogTap(HandleDiglogTapType.kget);
-                              },
+                              width: 24,
+                              height: 24,
+                              colorFilter: ColorFilter.mode(
+                                  context.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black,
+                                  BlendMode.srcIn),
                             ),
+                            onPressed: () {
+                              boop.selection();
+                              handleDiglogTap(HandleDiglogTapType.kget);
+                            },
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: Card(
-                      elevation: 0,
-                      color:
-                          (!context.isDarkMode ? '#e2e7f1' : '#272727').$color,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: TextField(
-                          controller: _editingController,
-                          maxLines: 32,
-                          style: TextStyle(
-                            color: context.isDarkMode
-                                ? Colors.white
-                                : Colors.black,
-                            fontSize: 14,
-                          ),
-                          decoration: InputDecoration.collapsed(
-                            hintText: sourceHelpText,
-                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Card(
+                    elevation: 0,
+                    color: (!context.isDarkMode ? '#e2e7f1' : '#272727').$color,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: TextField(
+                        controller: _editingController,
+                        maxLines: 32,
+                        style: TextStyle(
+                          color:
+                              context.isDarkMode ? Colors.white : Colors.black,
+                          fontSize: 14,
+                        ),
+                        decoration: InputDecoration.collapsed(
+                          hintText: sourceHelpText,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 12),
-                ],
-              ),
+                ),
+                SizedBox(height: 12),
+              ],
             ),
-          );
-        });
-    // Get.defaultDialog(
-    //   radius: 12,
-    //   actions: [
-    //     Zoom(
-    //       child: CupertinoButton.filled(
-    //         sizeStyle: CupertinoButtonSize.medium,
-    //         padding: const EdgeInsets.symmetric(
-    //           horizontal: 12,
-    //         ),
-    //         child: const Text("清空"),
-    //         onPressed: () {
-    //           handleDiglogTap(HandleDiglogTapType.clean);
-    //         },
-    //       ),
-    //     ),
-    //     Zoom(
-    //       child: CupertinoButton.filled(
-    //         sizeStyle: CupertinoButtonSize.medium,
-    //         padding: const EdgeInsets.symmetric(
-    //           horizontal: 12,
-    //         ),
-    //         child: const Text("获取配置"),
-    //         onPressed: () {
-    //           boop.selection();
-    //           handleDiglogTap(HandleDiglogTapType.kget);
-    //         },
-    //       ),
-    //     ),
-    //   ],
-    //   titlePadding: EdgeInsets.zero,
-    //   titleStyle: TextStyle(
-    //     fontSize: 16,
-    //     color: context.isDarkMode ? Colors.white : Colors.black,
-    //   ),
-    //   content: SizedBox(
-    //     height: Get.height * .42,
-    //     width: width,
-    //     child: Column(
-    //       children: [
-    //         Row(
-    //           children: [Text("视频源")],
-    //         ),
-    //         Expanded(
-    //           child: Card(
-    //             color: Colors.black,
-    //             child: Padding(
-    //               padding: const EdgeInsets.all(12.0),
-    //               child: TextField(
-    //                 controller: _editingController,
-    //                 maxLines: 32,
-    //                 style: TextStyle(color: Colors.white, fontSize: 14),
-    //                 decoration: InputDecoration.collapsed(
-    //                   hintText: sourceHelpText,
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
+          ),
+        );
+      },
+    );
   }
 
   void handleCleanCacheBefore(BuildContext ctx) {

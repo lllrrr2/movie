@@ -8,14 +8,15 @@ import 'package:catmovie/utils/boop.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'package:get/get.dart';
 import 'package:catmovie/app/modules/home/controllers/home_controller.dart';
 import 'package:catmovie/app/modules/home/views/mirror_check.dart';
 import 'package:catmovie/app/shared/mirror_status_stack.dart';
-import 'package:catmovie/app/widget/wechat_popmenu.dart';
 import 'package:catmovie/shared/manage.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pull_down_button/pull_down_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:xi/xi.dart';
 
@@ -124,26 +125,6 @@ class _MirrorTableViewState extends State<MirrorTableView>
     scrollController.dispose();
     super.dispose();
   }
-
-  var menuItems = [
-    ItemModel(
-      '批量检测源',
-      Icons.chat_bubble,
-      MenuActionType.check,
-    ),
-    ItemModel(
-      '一键删除失效源',
-      Icons.no_encryption,
-      MenuActionType.deleteUnavailable,
-    ),
-    ItemModel(
-      '导出源',
-      Icons.settings_overscan,
-      MenuActionType.export,
-    ),
-  ];
-
-  final CustomPopupMenuController _controller = CustomPopupMenuController();
 
   Map<String, bool> __statusMap = {};
 
@@ -264,70 +245,150 @@ class _MirrorTableViewState extends State<MirrorTableView>
     return SizedBox(
       width: double.infinity,
       height: context.mediaQuery.size.height * .72,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          spacing: 12,
-          children: [
-            Row(
+      child: Column(
+        spacing: 0,
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
-                  spacing: 6,
+                  spacing: 12,
                   children: [
-                    Icon(
-                      CupertinoIcons.cube_box,
-                      size: 28,
-                      color: context.isDarkMode ? Colors.white : Colors.black,
-                    ),
-                    Text(
-                      "源管理",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: context.isDarkMode
+                            ? Colors.blue.shade700.withValues(alpha: .3)
+                            : Colors.blue.shade100,
+                        borderRadius: BorderRadius.circular(10),
                       ),
+                      child: Icon(
+                        CupertinoIcons.cube_box,
+                        size: 24,
+                        color: context.isDarkMode
+                            ? Colors.blue.shade300
+                            : Colors.blue.shade700,
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "源管理",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: context.isDarkMode
+                                ? Colors.white
+                                : Colors.grey.shade800,
+                          ),
+                        ),
+                        Text(
+                          "${_mirrorList.length} 个数据源",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: context.isDarkMode
+                                ? Colors.grey.shade400
+                                : Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
                 Row(
-                  spacing: 6,
+                  spacing: 12,
                   children: [
-                    CustomPopupMenu(
-                      menuBuilder: () => PopMenuBox(
-                        items: menuItems,
-                        onTap: (MenuActionType value) {
-                          _controller.hideMenu();
-                          handleClickSubMenu(value);
-                          boop.selection();
-                        },
-                      ),
-                      pressType: PressType.singleClick,
-                      verticalMargin: -10,
-                      controller: _controller,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        child: Icon(
-                          CupertinoIcons.command,
-                          size: 20,
-                          color:
-                              context.isDarkMode ? Colors.white : Colors.black,
-                        ),
-                      ),
+                    PullDownButton(
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          PullDownMenuItem(
+                            onTap: () {
+                              handleClickSubMenu(MenuActionType.check);
+                              boop.selection();
+                            },
+                            title: '批量检测源',
+                            icon: Icons.assignment,
+                          ),
+                          PullDownMenuItem(
+                            title: '导出源',
+                            onTap: () {
+                              // handleClickSubMenu(MenuActionType.export);
+                              // boop.selection();
+                            },
+                            icon: CupertinoIcons.arrowshape_turn_up_right,
+                          ),
+                          PullDownMenuItem(
+                            onTap: () {
+                              // handleClickSubMenu(
+                              //     MenuActionType.deleteUnavailable);
+                              // boop.selection();
+                            },
+                            title: '一键删除失效源',
+                            isDestructive: true,
+                            icon: CupertinoIcons.delete,
+                          ),
+                        ];
+                      },
+                      buttonBuilder: (BuildContext context, showMenu) {
+                        return Zoom(
+                          onTap: showMenu,
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: context.isDarkMode
+                                  ? Colors.grey.shade700
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: context.isDarkMode
+                                    ? Colors.grey.shade600
+                                    : Colors.grey.shade200,
+                              ),
+                            ),
+                            child: Icon(
+                              CupertinoIcons.ellipsis,
+                              size: 18,
+                              color: context.isDarkMode
+                                  ? Colors.white
+                                  : Colors.grey.shade700,
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    IconButton(
-                      onPressed: () {
+                    Zoom(
+                      onTap: () {
+                        EasyLoading.dismiss();
                         Navigator.pop(context);
                       },
-                      icon: Icon(
-                        Icons.close,
-                        color: context.isDarkMode ? Colors.white : Colors.black,
+                      child: Container(
+                              padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: context.isDarkMode
+                              ? Colors.red.shade700.withValues(alpha: .2)
+                              : Colors.red.shade50,
+                                borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                            Icons.close,
+                            size: 18,
+                            color: context.isDarkMode
+                                ? Colors.red.shade300
+                                : Colors.red.shade600,
+                          ),
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-            Expanded(
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12.0, 0, 12.0, 12.0),
               child: SizedBox(
                 width: double.infinity,
                 child: Scrollbar(
@@ -336,7 +397,7 @@ class _MirrorTableViewState extends State<MirrorTableView>
                     controller: scrollController,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: mirrorGridCount,
-                      mainAxisExtent: 80,
+                      mainAxisExtent: 88,
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
                     ),
@@ -359,8 +420,8 @@ class _MirrorTableViewState extends State<MirrorTableView>
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -390,7 +451,7 @@ class MirrorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color backgroundColor = current
-        ? (context.isDarkMode ? "#f1f1f1" : "#0f0f0f").$color
+        ? (context.isDarkMode ? "#f1f1f1" : "#1a237e").$color
         : (context.isDarkMode ? '#272727' : "#e2e8f0").$color;
 
     Color textColor = current
@@ -402,13 +463,33 @@ class MirrorCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: backgroundColor,
+          gradient: current
+              ? LinearGradient(
+                  colors: context.isDarkMode
+                      ? [Colors.grey.shade100, Colors.grey.shade200]
+                      : [Colors.indigo.shade700, Colors.purple.shade800],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          color: current ? null : backgroundColor,
           borderRadius: BorderRadius.circular(8),
+          boxShadow: current
+              ? [
+                  BoxShadow(
+                    color: (context.isDarkMode ? Colors.grey : Colors.indigo)
+                        .withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
         padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 3,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -433,7 +514,6 @@ class MirrorCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 4),
             if (_desc.isNotEmpty)
               Text(
                 _desc,
@@ -446,7 +526,6 @@ class MirrorCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-            const SizedBox(height: 4),
             Builder(builder: (context) {
               var status = item.meta.status
                   ? MovieStatusType.available
@@ -455,6 +534,89 @@ class MirrorCard extends StatelessWidget {
               return MovieStatusWidget(
                 status: status,
                 cacheStatus: cacheStatus,
+              );
+            }),
+            Builder(builder: (context) {
+              var gfw = item.meta.extra['gfw'];
+              var _type = item.meta.type;
+              var status = item.meta.status
+                  ? MovieStatusType.available
+                  : MovieStatusType.unavailable;
+              var cacheStatus = hashTable[item.meta.id] ?? true;
+
+              bool isAvailable =
+                  status == MovieStatusType.available && cacheStatus;
+
+              var list = [
+                _type == SourceType.maccms ? "VOD" : "JS",
+                if (gfw is bool) gfw ? "直连" : "翻墙",
+              ];
+              return Row(
+                spacing: 6,
+                children: list.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  String item = entry.value;
+
+                  Color backgroundColor;
+                  Color textColor;
+                  BoxDecoration decoration;
+
+                  if (isAvailable) {
+                    textColor = Colors.white;
+                    if (index == 0) {
+                      backgroundColor = item == "VOD"
+                          ? Colors.blue.shade600
+                          : Colors.purple.shade600;
+                    } else {
+                      backgroundColor = item == "直连"
+                          ? Colors.green.shade600
+                          : Colors.orange.shade600;
+                    }
+                    decoration = BoxDecoration(
+                      color: backgroundColor,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: backgroundColor.withValues(alpha: .3),
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    );
+                  } else {
+                    textColor = Colors.grey.shade600;
+                    decoration = BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.grey.shade400,
+                        width: 1,
+                        strokeAlign: BorderSide.strokeAlignInside,
+                      ),
+                    );
+                  }
+
+                  return Opacity(
+                    opacity: isAvailable ? 1.0 : 0.6,
+                    child: Container(
+                      decoration: decoration,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      child: Text(
+                        item,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: textColor,
+                          fontWeight:
+                              isAvailable ? FontWeight.w600 : FontWeight.w500,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
               );
             }),
           ],
