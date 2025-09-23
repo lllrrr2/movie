@@ -141,6 +141,10 @@ class UniversalSpider extends ISpiderAdapter {
   }
 
   String _getLogicJSCode(JSCodeType type) {
+    var code = _jsMap[type.name];
+    if (code is! String) {
+      return jsonEncode(code);
+    }
     return _jsMap[type.name] ?? "";
   }
 
