@@ -8,7 +8,7 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'path.dart';
-import 'package:native_dio_adapter/native_dio_adapter.dart';
+// import 'package:native_dio_adapter/native_dio_adapter.dart';
 
 /// dio http 请求库缓存时间
 const kHttpCacheTime = Duration(hours: 2);
@@ -96,23 +96,23 @@ class XHttp {
       );
     }
 
-    if (Platform.isIOS || Platform.isMacOS || Platform.isAndroid) {
-      // TODO(d1y): 这里需要忽律掉证书错误的域名
-      dio.httpClientAdapter = NativeAdapter(createCupertinoConfiguration: () {
-        return URLSessionConfiguration.defaultSessionConfiguration()
-          ..allowsCellularAccess = true
-          ..allowsConstrainedNetworkAccess = true
-          ..allowsExpensiveNetworkAccess = true;
-      }, createCronetEngine: () {
-        return CronetEngine.build(enableHttp2: true, enableQuic: true);
-      });
-    } else {
-      dio.httpClientAdapter = IOHttpClientAdapter(createHttpClient: () {
-        final client = HttpClient();
-        client.badCertificateCallback = (cert, host, port) => true;
-        return client;
-      });
-    }
+    // if (Platform.isIOS || Platform.isMacOS || Platform.isAndroid) {
+    //   // TODO(d1y): 这里需要忽律掉证书错误的域名
+    //   dio.httpClientAdapter = NativeAdapter(createCupertinoConfiguration: () {
+    //     return URLSessionConfiguration.defaultSessionConfiguration()
+    //       ..allowsCellularAccess = true
+    //       ..allowsConstrainedNetworkAccess = true
+    //       ..allowsExpensiveNetworkAccess = true;
+    //   }, createCronetEngine: () {
+    //     return CronetEngine.build(enableHttp2: true, enableQuic: true);
+    //   });
+    // } else {
+    dio.httpClientAdapter = IOHttpClientAdapter(createHttpClient: () {
+      final client = HttpClient();
+      client.badCertificateCallback = (cert, host, port) => true;
+      return client;
+    });
+    // }
   }
 
   static Future<T> get<T>(String url, [Map<String, dynamic>? params]) async {
