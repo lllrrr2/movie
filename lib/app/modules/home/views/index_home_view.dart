@@ -71,6 +71,7 @@ class _IndexHomeViewState extends State<IndexHomeView>
       var id = subItem.id;
       var isNext = await showLoadingPlaceholderTask(() async {
         data = await controller.currentMirrorItem.getDetail(id);
+        data = subItem.mergeWith(data);
       });
       if (!isNext) return;
     }

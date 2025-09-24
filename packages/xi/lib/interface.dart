@@ -140,6 +140,31 @@ class VideoDetail {
     this.videoInfo = kDefaultVideoSize,
     this.videos = const [],
   });
+
+  VideoDetail mergeWith(VideoDetail neoDetail) {
+    var title = neoDetail.title.isEmpty ? this.title : neoDetail.title;
+    var desc = neoDetail.desc.isEmpty ? this.desc : neoDetail.desc;
+    var updateTime = neoDetail.updateTime.isEmpty ? this.updateTime : neoDetail.updateTime;
+    var remark = neoDetail.remark.isEmpty ? this.remark : neoDetail.remark;
+    var bigCoverImage = neoDetail.bigCoverImage.isEmpty ? this.bigCoverImage : neoDetail.bigCoverImage;
+    var smallCoverImage = neoDetail.smallCoverImage.isEmpty ? this.smallCoverImage : neoDetail.smallCoverImage;
+    var videos = neoDetail.videos.isEmpty ? this.videos : neoDetail.videos;
+    return VideoDetail(
+      id: neoDetail.id,
+      title: title,
+      desc: desc,
+      updateTime: updateTime,
+      remark: remark,
+      likeCount: neoDetail.likeCount,
+      viewCount: neoDetail.viewCount,
+      dislikeCount: neoDetail.dislikeCount,
+      bigCoverImage: bigCoverImage,
+      smallCoverImage: smallCoverImage,
+      videoInfo: neoDetail.videoInfo,
+      videos: videos,
+      extra: neoDetail.extra,
+    );
+  }
 }
 
 enum SourceType {
