@@ -8,7 +8,11 @@
       "name": "movie",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main.dart"
+      "program": "lib/main.dart",
+      "env": {
+        "CM_DEBUG": "0",
+        "CM_FULL_HTTP_LOG": "0",
+      }
     },
     {
       "name": "movie (profile mode)",
