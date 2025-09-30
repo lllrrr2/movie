@@ -42,7 +42,9 @@ jobs:
           dart run script/replace_version.dart
       - name: Generate templates
         run: |
-          cd packages/xi/lib/adapters/templates
+          cd JS/cli
+          bun install
+          cd ../../packages/xi/lib/adapters/templates
           bun install
           bun run build
       - name: Build windows
@@ -96,7 +98,9 @@ jobs:
           flutter pub run build_runner build
       - name: Generate templates
         run: |
-          cd packages/xi/lib/adapters/templates
+          cd JS/cli
+          bun install
+          cd ../../packages/xi/lib/adapters/templates
           bun install
           bun run build
       - name: Enable Linux support
@@ -168,7 +172,9 @@ jobs:
           dart run script/replace_version.dart
       - name: Generate templates
         run: |
-          cd packages/xi/lib/adapters/templates
+          cd JS/cli
+          bun install
+          cd ../../packages/xi/lib/adapters/templates
           bun install
           bun run build
       - name: Build APK and IPA
