@@ -4,21 +4,26 @@ import 'package:after_layout/after_layout.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:catmovie/app/modules/home/controllers/home_controller.dart';
 import 'package:catmovie/app/routes/app_pages.dart';
+import 'package:catmovie/app/shared/bus.dart';
 import 'package:catmovie/app/widget/helper.dart';
 import 'package:catmovie/app/widget/k_tag.dart';
 import 'package:catmovie/app/widget/window_appbar.dart';
 import 'package:catmovie/app/widget/zoom.dart';
 import 'package:catmovie/isar/schema/history_schema.dart';
+import 'package:catmovie/shared/enum.dart';
 import 'package:catmovie/utils/boop.dart';
 import 'package:concurrent_queue/concurrent_queue.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:catmovie/app/extension.dart';
 import 'package:isar_community/isar.dart';
 import 'package:tuple/tuple.dart';
 import 'package:xi/xi.dart';
+
+const kNsfwFlag = "114514";
 
 final kAllSourceMeta =
     SourceMeta(id: "6324", name: "全部", type: SourceType.maccms, api: "empty");
@@ -178,6 +183,16 @@ class _SearchV2State extends State<SearchV2> with AfterLayoutMixin {
   }
 
   void handleSearch(String _keyword) async {
+    if (kNsfwFlag == _keyword) {
+      var flag = getSettingAsKeyIdent<bool>(SettingsAllKey.showNsfwSetting);
+      var newFlag = !flag;
+      var msg = "绅士模式设置已${newFlag ? "显示" : "隐藏"}";
+      EasyLoading.showInfo(msg);
+      updateSetting(SettingsAllKey.showNsfwSetting, newFlag);
+      $bus.fire(ShowNsfwSettingEvent(newFlag));
+      Get.back();
+      return;
+    }
     textEditingController.text = _keyword;
     showHistory = false;
     isSearching = true;

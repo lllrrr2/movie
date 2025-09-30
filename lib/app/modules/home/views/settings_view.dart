@@ -63,7 +63,8 @@ class _SettingsViewState extends State<SettingsView>
     with AutomaticKeepAliveClientMixin {
   final HomeController home = Get.find<HomeController>();
 
-  late StreamSubscription $$bus;
+  late StreamSubscription $busWithNSFW;
+  late StreamSubscription $busWithShowNsfwSetting;
 
   Future<String> loadAsset() async {
     return await rootBundle.loadString('assets/data/source_help.txt');
@@ -152,8 +153,12 @@ class _SettingsViewState extends State<SettingsView>
     });
     loadSourceHelp();
     addMirrorMangerTextareaLister();
-    $$bus = $bus.on<SettingEvent>().listen((event) {
+    $busWithNSFW = $bus.on<SettingEvent>().listen((event) {
       updateNSFW(event.nsfw, onlyUpdate: true);
+    });
+    $busWithShowNsfwSetting = $bus.on<ShowNsfwSettingEvent>().listen((event) {
+      _showNsfwSetting = event.flag;
+      if (mounted) setState(() {});
     });
     super.initState();
   }
@@ -161,7 +166,8 @@ class _SettingsViewState extends State<SettingsView>
   @override
   void dispose() {
     _editingController.dispose();
-    $$bus.cancel();
+    $busWithNSFW.cancel();
+    $busWithShowNsfwSetting.cancel();
     super.dispose();
   }
 
